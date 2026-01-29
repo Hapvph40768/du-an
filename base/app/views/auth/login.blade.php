@@ -1,0 +1,5 @@
+<form method="post" action="<?= route('login') ?>">
+    <input type="email" name="email" placeholder="Email">
+    <input type="password" name="password" placeholder="Mật khẩu">
+    <button>Đăng nhập</button>
+</form>
