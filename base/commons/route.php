@@ -2,30 +2,67 @@
 
 use Phroute\Phroute\RouteCollector;
 
-$url = !isset($_GET['url']) ? "/" : $_GET['url'];
-
 $router = new RouteCollector();
 
-// filter check đăng nhập
-$router->filter('auth', function(){
-    if(!isset($_SESSION['auth']) || empty($_SESSION['auth'])){
-        header('location: ' . BASE_URL . 'login');die;
+/*
+|--------------------------------------------------------------------------
+| MIDDLEWARE (FILTER)
+|--------------------------------------------------------------------------
+*/
+
+// Middleware: đã đăng nhập
+$router->filter('auth', function () {
+    if (!isset($_SESSION['auth'])) {
+        header('Location: ' . BASE_URL . 'login');
+        exit;
     }
 });
 
-
-// bắt đầu định nghĩa ra các đường dẫn
-$router->get('/', function(){
-    return "trang chủ";
+// Middleware: chưa đăng nhập
+$router->filter('guest', function () {
+    if (isset($_SESSION['auth'])) {
+        header('Location: ' . BASE_URL);
+        exit;
+    }
 });
 
+// Middleware: chỉ admin
+$router->filter('admin', function () {
+    if (!isset($_SESSION['auth']) || $_SESSION['auth']->role !== 'admin') {
+        http_response_code(403);
+        echo '403 - Bạn không có quyền truy cập';
+        exit;
+    }
+});
 
-$router->get('login', [App\Controllers\AuthController::class, 'showLogin']);
-$router->post('login', [App\Controllers\AuthController::class, 'login']);
+/*
+|--------------------------------------------------------------------------
+| ROUTES
+|--------------------------------------------------------------------------
+*/
 
-$router->get('register', [App\Controllers\AuthController::class, 'showRegister']);
-$router->post('register', [App\Controllers\AuthController::class, 'register']);
+// Trang chủ
+$router->get('/', function () {
+    return 'Trang chủ';
+});
 
-$router->get('logout', [App\Controllers\AuthController::class, 'logout']);
+// ===== AUTH =====
 
-?>
+// Chỉ khách (chưa login)
+$router->group(['before' => 'guest'], function ($router) {
+    $router->get('login', [App\Controllers\AuthController::class, 'showLogin']);
+    $router->post('login', [App\Controllers\AuthController::class, 'login']);
+
+    $router->get('register', [App\Controllers\AuthController::class, 'showRegister']);
+    $router->post('register', [App\Controllers\AuthController::class, 'register']);
+});
+
+// Chỉ user đã login
+$router->group(['before' => 'auth'], function ($router) {
+    $router->get('logout', [App\Controllers\AuthController::class, 'logout']);
+});
+
+// Ví dụ route admin (đồ án cộng điểm)
+$router->group(['before' => ['auth', 'admin']], function ($router) {
+    $router->get('admin', [App\Controllers\AdminController::class, 'dashboard']);
+});

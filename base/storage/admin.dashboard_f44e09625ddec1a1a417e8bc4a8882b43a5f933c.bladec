@@ -1,0 +1,90 @@
+<?php $_shouldextend[1]=1; ?>
+
+<?php $this->startSection('header-title', 'Tổng quan'); ?>
+<?php $this->startSection('header-subtitle', 'Chào mừng trở lại!'); ?>
+
+<?php $this->startSection('content'); ?>
+<div class="stats-grid">
+ <!-- Stat Card 1 -->
+ <div class="stat-card">
+ <div class="stat-header">
+ <div class="stat-icon icon-orange">
+ <i class='bx bx-ticket'></i>
+ </div>
+ <span class="stat-percent percent-up">+12%</span>
+ </div>
+ <div class="stat-val">
+ <h3>0</h3>
+ <p>Tổng đặt vé</p>
+ </div>
+ </div>
+
+ <!-- Stat Card 2 -->
+ <div class="stat-card">
+ <div class="stat-header">
+ <div class="stat-icon icon-blue">
+ <i class='bx bx-dollar-circle'></i>
+ </div>
+ <span class="stat-percent percent-up">+8%</span>
+ </div>
+ <div class="stat-val">
+ <h3>0đ</h3>
+ <p>Doanh thu</p>
+ </div>
+ </div>
+
+ <!-- Stat Card 3 -->
+ <div class="stat-card">
+ <div class="stat-header">
+ <div class="stat-icon icon-green">
+ <i class='bx bx-bus'></i>
+ </div>
+ </div>
+ <div class="stat-val">
+ <h3>0</h3>
+ <p>Số xe</p>
+ </div>
+ </div>
+
+ <!-- Stat Card 4 -->
+ <div class="stat-card">
+ <div class="stat-header">
+ <div class="stat-icon icon-purple">
+ <i class='bx bx-map-alt'></i>
+ </div>
+ </div>
+ <div class="stat-val">
+ <h3>0</h3>
+ <p>Tuyến đường</p>
+ </div>
+ </div>
+</div>
+
+<div class="recent-bookings">
+ <div class="section-header">
+ <h3>Đặt vé gần đây</h3>
+ <a href="#" class="view-all">Xem tất cả →</a>
+ </div>
+ 
+ <div class="table-wrapper">
+ <table class="custom-table">
+ <thead>
+ <tr>
+ <th>KHÁCH HÀNG</th>
+ <th>TUYẾN</th>
+ <th>GHẾ</th>
+ <th>GIÁ</th>
+ <th>TRẠNG THÁI</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td colspan="5">Chưa có đặt vé nào</td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+</div>
+<?php $this->stopSection(); ?>
+
+<?php if (isset($_shouldextend[1])) { echo $this->runChild('layout.admin.AdminLayout'); } ?>
