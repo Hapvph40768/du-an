@@ -36,9 +36,9 @@ class AuthController extends BaseController
         // LOGIN SUCCESS
         $_SESSION['auth'] = $user;
 
-        // Redirect theo role
+        //  theo role
         if ($user->role === 'admin') {
-            redirect('success', 'Chào Admin', 'admin');
+            $this->render('layout.dashboard');
         }
 
         redirect('success', 'Đăng nhập thành công', '');

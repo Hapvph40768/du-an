@@ -48,7 +48,7 @@ $router->get('/', function () {
 
 // ===== AUTH =====
 
-// Chỉ khách (chưa login)
+// khách (chưa login)
 $router->group(['before' => 'guest'], function ($router) {
     $router->get('login', [App\Controllers\AuthController::class, 'showLogin']);
     $router->post('login', [App\Controllers\AuthController::class, 'login']);
@@ -57,12 +57,12 @@ $router->group(['before' => 'guest'], function ($router) {
     $router->post('register', [App\Controllers\AuthController::class, 'register']);
 });
 
-// Chỉ user đã login
+// user đã login
 $router->group(['before' => 'auth'], function ($router) {
     $router->get('logout', [App\Controllers\AuthController::class, 'logout']);
 });
 
-// Ví dụ route admin (đồ án cộng điểm)
+// route admin
 $router->group(['before' => ['auth', 'admin']], function ($router) {
-    $router->get('admin', [App\Controllers\AdminController::class, 'dashboard']);
+    $router->get('admin', [App\Controllers\AuthController::class, 'dashboard']);
 });
