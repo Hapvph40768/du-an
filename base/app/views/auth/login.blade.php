@@ -3,6 +3,7 @@
 @section('title', 'Đăng nhập')
 
 @section('content')
+
     <form method="post" action="<?= route('login') ?>">
         <div class="form-group">
             <label class="form-label">Email</label>

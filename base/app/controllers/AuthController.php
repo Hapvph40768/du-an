@@ -1,5 +1,6 @@
 <?php
 namespace App\Controllers;
+
 use App\Models\User;
 use App\Requests\LoginRequest;
 
@@ -9,10 +10,12 @@ class AuthController extends BaseController
     {
         return $this->render('auth.login');
     }
+
     public function login()
     {
         $data = $_POST;
 
+        // Validate
         $errors = LoginRequest::validate($data);
         if (!empty($errors)) {
             redirect('errors', 'Dữ liệu không hợp lệ', 'login');
@@ -33,15 +36,27 @@ class AuthController extends BaseController
             redirect('errors', 'Mật khẩu không đúng', 'login');
         }
 
-        // LOGIN SUCCESS
-        $_SESSION['auth'] = $user;
+        // ===== LOGIN SUCCESS =====
+        $_SESSION['auth'] = [
+            'id'    => $user->id,
+            'name'  => $user->name,
+            'email' => $user->email,
+            'role'  => $user->role, // admin | staff | customer
+        ];
 
-        //  theo role
-        if ($user->role === 'admin') {
-            $this->render('layout.dashboard');
+        // Redirect theo role
+        switch ($user->role) {
+            case 'admin':
+                redirect('success', 'Chào mừng Admin', 'admin/dashboard');
+                break;
+
+            case 'staff':
+                redirect('success', 'Chào mừng Staff', 'staff/dashboard');
+                break;
+
+            default:
+                redirect('success', 'Đăng nhập thành công', '');
         }
-
-        redirect('success', 'Đăng nhập thành công', '');
     }
 
     public function showRegister()
@@ -53,7 +68,12 @@ class AuthController extends BaseController
     {
         $data = $_POST;
 
-        if (empty($data['name']) || empty($data['email']) || empty($data['phone']) || empty($data['password'])) {
+        if (
+            empty($data['name']) ||
+            empty($data['email']) ||
+            empty($data['phone']) ||
+            empty($data['password'])
+        ) {
             redirect('errors', 'Vui lòng điền đầy đủ thông tin', 'register');
         }
 
@@ -64,13 +84,16 @@ class AuthController extends BaseController
         }
 
         $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+        $data['role'] = 'customer'; 
+
         $userModel->create($data);
+
         redirect('success', 'Đăng ký thành công, vui lòng đăng nhập', 'login');
     }
-public function logout()
-{
-    unset($_SESSION['auth']);
-    redirect('success', 'Đăng xuất thành công', 'login');
-}
 
+    public function logout()
+    {
+        unset($_SESSION['auth']);
+        redirect('success', 'Đăng xuất thành công', 'login');
+    }
 }

@@ -3,6 +3,7 @@
 <?php $this->startSection('title', 'Đăng nhập'); ?>
 
 <?php $this->startSection('content'); ?>
+
  <form method="post" action="<?= route('login') ?>">
  <div class="form-group">
  <label class="form-label">Email</label>

@@ -18,7 +18,6 @@ $router->filter('auth', function () {
     }
 });
 
-// Middleware: chưa đăng nhập
 $router->filter('guest', function () {
     if (isset($_SESSION['auth'])) {
         header('Location: ' . BASE_URL);
@@ -26,11 +25,18 @@ $router->filter('guest', function () {
     }
 });
 
-// Middleware: chỉ admin
 $router->filter('admin', function () {
-    if (!isset($_SESSION['auth']) || $_SESSION['auth']->role !== 'admin') {
+    if ($_SESSION['auth']['role'] !== 'admin') {
         http_response_code(403);
-        echo '403 - Bạn không có quyền truy cập';
+        echo '403 - Chỉ admin mới được truy cập';
+        exit;
+    }
+});
+
+$router->filter('staff', function () {
+    if (!in_array($_SESSION['auth']['role'], ['admin','staff'])) {
+        http_response_code(403);
+        echo '403 - Không có quyền';
         exit;
     }
 });
@@ -46,9 +52,9 @@ $router->get('/', function () {
     return 'Trang chủ';
 });
 
-// ===== AUTH =====
+// ========== AUTH ==========
 
-// khách (chưa login)
+// Khách chưa đăng nhập
 $router->group(['before' => 'guest'], function ($router) {
     $router->get('login', [App\Controllers\AuthController::class, 'showLogin']);
     $router->post('login', [App\Controllers\AuthController::class, 'login']);
@@ -57,12 +63,14 @@ $router->group(['before' => 'guest'], function ($router) {
     $router->post('register', [App\Controllers\AuthController::class, 'register']);
 });
 
-// user đã login
+// User đã đăng nhập
 $router->group(['before' => 'auth'], function ($router) {
     $router->get('logout', [App\Controllers\AuthController::class, 'logout']);
 });
 
-// route admin
-$router->group(['before' => ['auth', 'admin']], function ($router) {
-    $router->get('admin', [App\Controllers\AuthController::class, 'dashboard']);
+// ========== ADMIN ==========
+$router->group(['before' => ['auth','admin']], function ($router) {
+    $router->get('admin/dashboard', [App\Controllers\AdminController::class, 'dashboard']);
 });
+
+// ========== STAFF ==========
